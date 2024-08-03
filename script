@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>A-Frame Portfolio City</title>
+    <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/aframe-extras@6.1.1/dist/aframe-extras.min.js"></script>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+        }
+
+        .ui-overlay {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            color: white;
+            font-family: Arial, sans-serif;
+            font-size: 18px;
+            z-index: 1;
+        }
+
+        .ui-overlay button {
+            background-color: #444;
+            border: none;
+            padding: 10px;
+            color: white;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 5px;
+        }
+
+        .ui-overlay button:hover {
+            background-color: #666;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="ui-overlay">
+        <button id="prevSection">Previous</button>
+        <button id="nextSection">Next</button>
+    </div>
+
+    <a-scene>
+        <!-- Asset management could go here -->
+
+        <!-- Ground -->
+        <a-plane color="#88a" width="200" height="200" rotation="-90 0 0" position="0 0 0"></a-plane>
+
+        <!-- Streets -->
+        <a-plane color="#333" width="2" height="200" rotation="-90 0 0" position="-10 0.01 0"></a-plane>
+        <a-plane color="#333" width="2" height="200" rotation="-90 0 0" position="10 0.01 0"></a-plane>
+        <a-plane color="#333" width="200" height="2" rotation="-90 0 0" position="0 0.01 10"></a-plane>
+        <a-plane color="#333" width="200" height="2" rotation="-90 0 0" position="0 0.01 -10"></a-plane>
+
+        <!-- Skyscrapers -->
+        <a-box color="#888" depth="4" height="50" width="10" position="-15 25 -15"></a-box>
+        <a-box color="#888" depth="4" height="30" width="10" position="-20 15 -5"></a-box>
+        <a-box color="#888" depth="4" height="40" width="10" position="-5 20 -20"></a-box>
+        <a-box color="#888" depth="4" height="35" width="10" position="5 17.5 -10"></a-box>
+        <a-box color="#888" depth="4" height="45" width="10" position="15 22.5 5"></a-box>
+        <a-box color="#888" depth="4" height="30" width="10" position="25 15 10"></a-box>
+        <a-box color="#888" depth="4" height="50" width="10" position="10 25 20"></a-box>
+        <a-box color="#888" depth="4" height="30" width="10" position="-10 15 15"></a-box>
+
+        <!-- Parametric Curve Path -->
+        <a-curve id="rollerCoasterPath">
+            <a-curve-point position="0 2 0"></a-curve-point>
+            <a-curve-point position="10 5 -5"></a-curve-point>
+            <a-curve-point position="20 10 0"></a-curve-point>
+            <a-curve-point position="15 15 10"></a-curve-point>
+            <a-curve-point position="5 8 20"></a-curve-point>
+            <a-curve-point position="-5 5 15"></a-curve-point>
+            <a-curve-point position="-15 3 5"></a-curve-point>
+            <a-curve-point position="-20 8 -10"></a-curve-point>
+            <a-curve-point position="-10 10 -20"></a-curve-point>
+        </a-curve>
+
+        <!-- Roller Coaster Car -->
+        <a-entity id="rollerCoasterCar" animation-mixer>
+            <a-camera></a-camera>
+        </a-entity>
+
+        <!-- Lighting and environment -->
+        <a-light type="ambient" color="#ffffff"></a-light>
+        <a-light type="directional" color="#ffffff" intensity="0.6" position="0 50 50"></a-light>
+        <a-sky color="#87CEEB"></a-sky>
+    </a-scene>
+
+    <script>
+        // Roller Coaster Navigation
+        const sections = [
+            { x: 0, y: 2, z: 0 },
+            { x: 10, y: 5, z: -5 },
+            { x: 20, y: 10, z: 0 },
+            { x: 15, y: 15, z: 10 },
+            { x: 5, y: 8, z: 20 },
+            { x: -5, y: 5, z: 15 },
+            { x: -15, y: 3, z: 5 },
+            { x: -20, y: 8, z: -10 },
+            { x: -10, y: 10, z: -20 }
+        ];
+        let currentSectionIndex = 0;
+        const car = document.querySelector('#rollerCoasterCar');
+
+        document.querySelector('#nextSection').addEventListener('click', () => {
+            currentSectionIndex = (currentSectionIndex + 1) % sections.length;
+            moveToSection(currentSectionIndex);
+        });
+
+        document.querySelector('#prevSection').addEventListener('click', () => {
+            currentSectionIndex = (currentSectionIndex - 1 + sections.length) % sections.length;
+            moveToSection(currentSectionIndex);
+        });
+
+        function moveToSection(index) {
+            const section = sections[index];
+            car.setAttribute('animation', {
+                property: 'position',
+                to: `${section.x} ${section.y} ${section.z}`,
+                dur: 2000,
+                easing: 'easeInOutQuad'
+            });
+            car.setAttribute('animation__rotation', {
+                property: 'rotation',
+                to: `${Math.random() * 10 - 5} ${Math.random() * 360} ${Math.random() * 10 - 5}`,
+                dur: 2000,
+                easing: 'easeInOutQuad'
+            });
+        }
+    </script>
+</body>
+
+</html>
